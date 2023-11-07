@@ -3,6 +3,13 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 from audio_functions import AudioManager
+from misc import print_user
+import warnings
+
+# Ignore specific user warnings about FP16 not being supported
+warnings.filterwarnings(
+    'ignore', message='FP16 is not supported on CPU; using FP32 instead')
+
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -36,7 +43,7 @@ def ml_system_interview():
 
         # Transcribe the user's speech
         user_message = am.transcribe_audio(audio_path)
-        print(f"\nYou said: {user_message}")
+        print_user(user_message)
 
         # Append user's message to the list of messages
         messages.append({
@@ -52,7 +59,6 @@ def ml_system_interview():
 
         system_message = response.choices[0].message.content
         # Use TTS to stream and play the system's message
-        print(f"\nML System: {system_message}")
         am.stream_and_play(system_message)
 
         # Append system's message to the list of messages

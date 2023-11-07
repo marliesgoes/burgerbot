@@ -5,6 +5,7 @@ import io
 import whisper
 from pydub import AudioSegment
 from pydub.playback import play
+from misc import print_robot
 
 
 class AudioManager:
@@ -17,7 +18,7 @@ class AudioManager:
         """
         Record audio from the microphone for a specified duration and sampling rate.
         """
-        print("Recording...")
+        print("Listening...")
         audio = sd.rec(int(duration * fs), samplerate=fs, channels=1)
         sd.wait()
         print("Recording finished")
@@ -49,4 +50,6 @@ class AudioManager:
 
         byte_stream = io.BytesIO(response.content)
         audio_segment = AudioSegment.from_file(byte_stream, format="mp3")
+
+        print_robot(text)
         play(audio_segment)
