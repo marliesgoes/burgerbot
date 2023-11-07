@@ -1,3 +1,7 @@
-openai==0.27.0
+openai==1.1.1
 python-dotenv==0.21.1 # For OpenAI auth
 pyserial # For robot communication
+openai-whisper
+pydub
+wavio
+sounddevice

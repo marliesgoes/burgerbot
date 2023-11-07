@@ -6,6 +6,7 @@
 
 ```bash
 pip install -r requirements.txt
+brew install ffmpeg
 ```
 
 ### 2. Setup OpenAI API Key
