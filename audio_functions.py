@@ -2,6 +2,7 @@ from openai import OpenAI
 import sounddevice as sd
 import wavio
 import io
+import os
 import whisper
 from pydub import AudioSegment
 from pydub.playback import play
@@ -36,6 +37,7 @@ class AudioManager:
         Transcribe the audio at the given path using Whisper.
         """
         result = self.model.transcribe(audio_path)
+        os.remove(audio_path)
         return result["text"]
 
     def stream_and_play(self, text):
