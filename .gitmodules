@@ -1,3 +1,6 @@
 [submodule "DexArm_API"]
 	path = DexArm_API
 	url = https://github.com/Rotrics-Dev/DexArm_API.git
+[submodule "Grounded-Segment-Anything"]
+	path = Grounded-Segment-Anything
+	url = https://github.com/IDEA-Research/Grounded-Segment-Anything
