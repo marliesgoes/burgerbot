@@ -12,6 +12,7 @@ brew install ffmpeg
 It takes a few more steps to install the visual modules. In the working directory, run:
 
 ```bash
+# If you have already cloned the repo, maybe run `git submodule update --recursive --remote` to update the submodules
 pip install -r Grounded-Segment-Anything/requirements.txt
 pip install Grounded-Segment-Anything/GroundingDINO
 pip install Grounded-Segment-Anything/segment_anything
