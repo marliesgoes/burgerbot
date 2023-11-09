@@ -1,5 +1,5 @@
 import unittest
-from burgerbot import extract_recipe
+from burgerbot import extract_recipe, execute_recipe
 
 
 class TestExtractRecipe(unittest.TestCase):
@@ -16,6 +16,10 @@ class TestExtractRecipe(unittest.TestCase):
         ingredients = extract_recipe(self.messages)
         for ingredient in ingredients:
             print('🌼 ', ingredient)
+
+    def test_execute_recipe(self):
+        ingredients = ['bun', 'patty', 'cheese', 'lettuce', 'tomato', 'bun']
+        execute_recipe(ingredients)
 
 
 if __name__ == '__main__':

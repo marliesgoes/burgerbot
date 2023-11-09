@@ -45,7 +45,7 @@ class AudioManager:
         Use OpenAI's text-to-speech API to stream the audio and play the bot's response.
         """
         response = self.client.audio.speech.create(
-            model="tts-1",
+            model="tts-1-1106",
             voice="alloy",
             input=text
         )

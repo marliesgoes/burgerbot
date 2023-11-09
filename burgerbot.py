@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 from audio_functions import AudioManager
 from misc import print_user, print_robot, call_gpt
+from image_segmentation import *
 import warnings
 
 # Ignore specific user warnings about FP16 not being supported
@@ -57,7 +58,7 @@ def create_order():
 
         if "confirmation" in system_message.lower():
             am.stream_and_play(
-                "Your order had been confirmed. I will now extract the recipe.")
+                "Your order has been confirmed. I will now extract the recipe.")
             return messages
 
         # Use TTS to stream and play the system's message
@@ -70,7 +71,7 @@ def create_order():
         })
 
 
-def extract_recipe(messages):
+def extract_recipe(messages, run_checks=False):
     prompt = f"""Based on the above conversation, extract the recipe 
                  as a comma separated list in the correct order from 
                  lowest to highest. This should be an exact build plan of 
@@ -88,20 +89,42 @@ def extract_recipe(messages):
     response = call_gpt(client, messages, "gpt-4-1106-preview")
     am.stream_and_play(f"Extracted recipe: {response}")
     ingredients = [ingredient.strip() for ingredient in response.split(',')]
-    # Sanity check 1: Only available ingredients used
-    if not all(ingredient in INGREDIENTS for ingredient in ingredients):
-        raise ValueError(
-            f"The response contains unexpected ingredients: {ingredients}")
 
-    # Sanity check 2: Didn't forget top bun
-    # LIMITATION: What if the user requested no to bun?
-    if not ingredients[0] == ingredients[-1]:
-        raise ValueError(
-            f"Forgot top {ingredients[0]}!")
+    if run_checks:
+        # Sanity check 1: Only available ingredients used
+        if not all(ingredient in INGREDIENTS for ingredient in ingredients):
+            raise ValueError(
+                f"The response contains unexpected ingredients: {ingredients}")
+
+        # Sanity check 2: Didn't forget top bun
+        # LIMITATION: What if the user requested no to bun?
+        if not ingredients[0] == ingredients[-1]:
+            raise ValueError(
+                f"Forgot top {ingredients[0]}!")
     return ingredients
 
 
+# Hardcoded Construction Site Coordinates
+DROPOFF_COORDS = None
+
+
 def execute_recipe(recipe):
+    for item in recipe:
+        # Find center of ingredient in image
+        print_robot(f"I'm looking for the {item}...")
+        image = get_camera_image()
+        camera_coords = find_center_of(item, image)
+        robot_coords = camera_to_robot_coords(camera_coords)
+        move_item(robot_coords, DROPOFF_COORDS)
+
+        # If not found:
+        # - Complain
+        print_robot(f"I couldn't find the {item}. Should I try again?")
+        # - Repeat
+        # If found:
+        # - Pick up
+        # - Move to hardcoded construction site
+
     raise NotImplementedError
 
 
