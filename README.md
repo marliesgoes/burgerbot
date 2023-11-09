@@ -12,7 +12,6 @@ brew install ffmpeg
 It takes a few more steps to install the visual modules. In the working directory, run:
 
 ```bash
-git clone https://github.com/IDEA-Research/Grounded-Segment-Anything
 pip install -r Grounded-Segment-Anything/requirements.txt
 pip install Grounded-Segment-Anything/GroundingDINO
 pip install Grounded-Segment-Anything/segment_anything
