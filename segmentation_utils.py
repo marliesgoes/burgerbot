@@ -60,7 +60,7 @@ ckpt_config_filename = "GroundingDINO_SwinB.cfg.py"
 
 groundingdino_model = load_model_hf(ckpt_repo_id, ckpt_filenmae, ckpt_config_filename, device)
 
-sam_checkpoint = 'Grounded-Segment-Anything/sam_vit_h_4b8939.pth'
+sam_checkpoint = 'sam_vit_h_4b8939.pth'
 
 sam_predictor = SamPredictor(build_sam(checkpoint=sam_checkpoint).to(device))
 
