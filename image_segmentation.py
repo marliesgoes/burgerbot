@@ -103,17 +103,3 @@ def move_item(pickup_coords, dropoff_coords):
         bool: True if the item was successfully moved, False otherwise.
     """
     pass
-
-
-# Test code
-if __name__ == "__main__":
-    image = PIL.Image.open("caliResulttr2.png")
-    for ingredient, max_num in [
-        ("green lettuce toy", 1),
-        ("red tomato toy", 1),
-        ("yellow cheese toy", 1),
-        ("brown meat toy", 1),
-        ("almond-color bun toy", 2),
-    ]:
-        ingredient_centers = find_center_of(ingredient, image, max_num=max_num)
-        print(f"{ingredient} centers:", ingredient_centers)
