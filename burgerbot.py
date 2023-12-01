@@ -109,23 +109,40 @@ DROPOFF_COORDS = None
 
 
 def execute_recipe(recipe):
+    """
+    Executes the recipe by finding and moving each ingredient to the dropoff coordinates.
+
+    Parameters:
+        recipe (list): A list of ingredients that need to be assembled to make the dish.
+    """
     for item in recipe:
-        # Find center of ingredient in image
-        print_robot(f"I'm looking for the {item}...")
-        image = get_camera_image()
-        camera_coords = find_center_of(item, image)
-        robot_coords = camera_to_robot_coords(camera_coords)
-        move_item(robot_coords, DROPOFF_COORDS)
+        item_found = False
+        while not item_found:
+            # Find center of ingredient in image
+            print_robot(f"I'm looking for the {item}...")
+            image = get_camera_image()
+            camera_coords = find_center_of(item, image)
 
-        # If not found:
-        # - Complain
-        print_robot(f"I couldn't find the {item}. Should I try again?")
-        # - Repeat
-        # If found:
-        # - Pick up
-        # - Move to hardcoded construction site
+            # Check if the item was found based on the returned coordinates
+            if camera_coords is not None:
+                robot_coords = camera_to_robot_coords(camera_coords)
+                move_item(robot_coords, DROPOFF_COORDS)
+                item_found = True
+            else:
+                # If not found, interact with the user for further instructions
+                print_robot(f"I couldn't find the {item}. Should I try again?")
+                # This function would need to be implemented to capture user input
+                user_response = get_user_input()
 
-    raise NotImplementedError
+                if user_response.lower() in ['yes', 'y']:
+                    print_robot(f"Trying to find the {item} again...")
+                else:
+                    print_robot("Moving on to the next item.")
+                    break  # Exit the while loop and move on to the next item
+
+    # If there are any other steps to complete after the loop, they would go here
+    # Otherwise, if the function is not fully implemented, you can raise an error
+    # raise NotImplementedError
 
 
 if __name__ == "__main__":
