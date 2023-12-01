@@ -3,7 +3,8 @@ import cv2 as cv
 import glob
 from DexArm_API.pydexarm.pydexarm import Dexarm
 
-def camera_to_robot_coords(img_path,cam_mat_path, dist_path,pick=(924,545)):
+
+def camera_to_robot_coords(img, cam_mat_path, dist_path, pick=(924, 545)):
     """
     Converts camera image space coordinates to robot arm's coordinate system.
 
@@ -13,7 +14,6 @@ def camera_to_robot_coords(img_path,cam_mat_path, dist_path,pick=(924,545)):
     Returns:
         tuple: A tuple of (x, y, z) coordinates in the robot's coordinate system.
     """
-    img = cv.imread(img_path)
     h,  w = img.shape[:2]
 
     cameraMatrix = np.load(cam_mat_path)
@@ -30,7 +30,7 @@ def camera_to_robot_coords(img_path,cam_mat_path, dist_path,pick=(924,545)):
     trans_matrix = np.array(
         [[0, 1, 0, 0.40], [1, 0, 0, 0.035], [0, 0, -1, 0.455], [0, 0, 0, 1]])
     inv_new_cam_mat = np.linalg.inv(newCameraMatrix)
-    pickup = np.array([pick[0],pick[1], 1])
+    pickup = np.array([pick[0], pick[1], 1])
     # print(f"pickup: {pickup}")
     cam_coor = inv_new_cam_mat@pickup
     cam_coor = cam_coor * 0.570
@@ -46,7 +46,7 @@ def camera_to_robot_coords(img_path,cam_mat_path, dist_path,pick=(924,545)):
     return robo_coor
 
 
-def move_item(robo_coor, dropoff_coords=(300,100),height=-55):
+def move_item(robo_coor, dropoff_coords=(300, 100), height=-55):
     """
     Commands the robot to move an item from pickup coordinates to dropoff coordinates.
 
@@ -59,15 +59,15 @@ def move_item(robo_coor, dropoff_coords=(300,100),height=-55):
     """
     dexarm = Dexarm(port="/dev/tty.usbmodem308B335D34381")
     dexarm.go_home()
-    dexarm.move_to(robo_coor[0], robo_coor[1],height)
+    dexarm.move_to(robo_coor[0], robo_coor[1], height)
     dexarm.air_picker_pick()
-    dexarm.move_to(robo_coor[0], robo_coor[1],0)
+    dexarm.move_to(robo_coor[0], robo_coor[1], 0)
     print("done1")
-    dexarm.move_to(dropoff_coords[0], dropoff_coords[1],height)
+    dexarm.move_to(dropoff_coords[0], dropoff_coords[1], height)
     print("done12")
 
     dexarm.air_picker_place()
-    dexarm.move_to(200, 0,0)
+    dexarm.move_to(200, 0, 0)
     dexarm.air_picker_stop()
 
 
@@ -76,5 +76,5 @@ if __name__ == "__main__":
     img_path = ""
     cam_mat_path = "cameraMatrix.npy"
     dist_path = "dist.npy"
-    robo_coors = camera_to_robot_coords(img_path,cam_mat_path, dist_path)
+    robo_coors = camera_to_robot_coords(img_path, cam_mat_path, dist_path)
     move_item(robo_coors)

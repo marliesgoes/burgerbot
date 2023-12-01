@@ -126,8 +126,12 @@ def execute_recipe(recipe):
             # Check if the item was found based on the returned coordinates
             if camera_coords is not None:
                 am.stream_and_play(f"I found the {item}...")
-                robot_coords = camera_to_robot_coords(camera_coords)
-                move_item(robot_coords, DROPOFF_COORDS)
+                cam_mat_path = "cameraMatrix.npy"
+                dist_path = "dist.npy"
+                robo_coors = camera_to_robot_coords(
+                    image, cam_mat_path, dist_path, pick=camera_coords)
+                am.stream_and_play(f"Moving {item}...")
+                move_item(robo_coors)
                 item_found = True
             else:
                 # If not found, interact with the user for further instructions
@@ -141,9 +145,7 @@ def execute_recipe(recipe):
                     print_robot("Moving on to the next item.")
                     break  # Exit the while loop and move on to the next item
 
-    # If there are any other steps to complete after the loop, they would go here
-    # Otherwise, if the function is not fully implemented, you can raise an error
-    # raise NotImplementedError
+    am.stream_and_play(f"All done! Enjoy!")
 
 
 if __name__ == "__main__":

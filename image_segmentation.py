@@ -76,30 +76,3 @@ def find_center_of(ingredient, image, max_num=1, visualize=False):
         centers.append((int(x), int(y)))
 
     return centers
-
-
-def camera_to_robot_coords(camera_coords):
-    """
-    Converts camera image space coordinates to robot arm's coordinate system.
-
-    Parameters:
-        camera_coords (tuple): A tuple of (x, y) coordinates in the camera's image space.
-
-    Returns:
-        tuple: A tuple of (x, y, z) coordinates in the robot's coordinate system.
-    """
-    pass
-
-
-def move_item(pickup_coords, dropoff_coords):
-    """
-    Commands the robot to move an item from pickup coordinates to dropoff coordinates.
-
-    Parameters:
-        pickup_coords (tuple): The (x, y, z) coordinates where the robot will pick up the item.
-        dropoff_coords (tuple): The (x, y, z) coordinates where the robot will place the item.
-
-    Returns:
-        bool: True if the item was successfully moved, False otherwise.
-    """
-    pass
