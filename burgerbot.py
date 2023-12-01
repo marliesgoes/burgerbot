@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from audio_functions import AudioManager
 from misc import print_user, print_robot, call_gpt
 from image_segmentation import *
+from pick_object import *
 import warnings
 
 # Ignore specific user warnings about FP16 not being supported
