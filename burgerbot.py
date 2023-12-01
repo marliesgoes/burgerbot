@@ -13,7 +13,6 @@ warnings.filterwarnings(
 
 # Initialize OpenAI
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI()
 
 # The AudioManager class holds functions for ASR & TTS
@@ -119,12 +118,13 @@ def execute_recipe(recipe):
         item_found = False
         while not item_found:
             # Find center of ingredient in image
-            print_robot(f"I'm looking for the {item}...")
+            am.stream_and_play(f"I'm looking for the {item}...")
             image = get_camera_image()
             camera_coords = find_center_of(item, image)
 
             # Check if the item was found based on the returned coordinates
             if camera_coords is not None:
+                am.stream_and_play(f"I found the {item}...")
                 robot_coords = camera_to_robot_coords(camera_coords)
                 move_item(robot_coords, DROPOFF_COORDS)
                 item_found = True

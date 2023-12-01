@@ -1,18 +1,39 @@
 from segmentation_utils import detect, groundingdino_model, sam_predictor, segment, draw_mask, transform_image
 import PIL
+from PIL import Image
 import numpy as np
+import cv2
 
 
 def get_camera_image():
     """
-    Captures an image using the system's camera and returns it.
+    Captures an image using the system's webcam and returns it.
 
     Returns:
-        image: An image object that can be processed by other functions. The exact format
-               of this object will depend on the implementation details and the image
-               processing library being used.
+        image: An image object that can be processed by other functions. The image
+               will be in the format used by OpenCV.
     """
-    pass
+    # Initialize the webcam (0 is the default camera)
+    cap = cv2.VideoCapture(0)
+
+    # Check if the webcam is opened correctly
+    if not cap.isOpened():
+        raise IOError("Cannot open webcam")
+
+    # Capture a single frame
+    ret, frame = cap.read()
+
+    # Release the webcam
+    cap.release()
+
+    # Check if the frame was captured correctly
+    if not ret:
+        raise IOError("Failed to capture image")
+
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    image = Image.fromarray(frame)
+
+    return image
 
 
 def find_center_of(ingredient, image, max_num=1, visualize=False):
@@ -28,18 +49,22 @@ def find_center_of(ingredient, image, max_num=1, visualize=False):
         the detected instances of the ingredient in the image space.
     """
     image_source, image = transform_image(image)
-    detected_boxes = detect(image, text_prompt=ingredient, model=groundingdino_model)
-    print(f"Detected {len(detected_boxes)} instances of {ingredient}, picking the top {max_num}...")
+    detected_boxes = detect(image, text_prompt=ingredient,
+                            model=groundingdino_model)
+    print(
+        f"Detected {len(detected_boxes)} instances of {ingredient}, picking the top {max_num}...")
     detected_boxes = detected_boxes[:max_num]
-    segmented_frame_masks = segment(image_source, sam_predictor, boxes=detected_boxes)
-    
+    segmented_frame_masks = segment(
+        image_source, sam_predictor, boxes=detected_boxes)
+
     if visualize:
         print("Visualizing the top segmentation mask")
-        annotated_frame_with_mask = draw_mask(segmented_frame_masks[0][0], image_source)
+        annotated_frame_with_mask = draw_mask(
+            segmented_frame_masks[0][0], image_source)
         # Visualize the annotated frame with mask
         image = PIL.Image.fromarray(annotated_frame_with_mask)
         image.show()
-    
+
     # Find the center of the masks
     centers = []
     for mask in segmented_frame_masks:
@@ -49,7 +74,7 @@ def find_center_of(ingredient, image, max_num=1, visualize=False):
         center = np.mean(pixels, axis=0)
         y, x = center
         centers.append((int(x), int(y)))
-    
+
     return centers
 
 
@@ -82,7 +107,6 @@ def move_item(pickup_coords, dropoff_coords):
 
 # Test code
 if __name__ == "__main__":
-    import PIL
     image = PIL.Image.open("caliResulttr2.png")
     for ingredient, max_num in [
         ("green lettuce toy", 1),

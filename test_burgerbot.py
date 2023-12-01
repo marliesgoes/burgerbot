@@ -1,5 +1,6 @@
 import unittest
 from burgerbot import extract_recipe, execute_recipe
+from image_segmentation import get_camera_image, find_center_of
 
 
 class TestExtractRecipe(unittest.TestCase):
@@ -18,8 +19,17 @@ class TestExtractRecipe(unittest.TestCase):
             print('🌼 ', ingredient)
 
     def test_execute_recipe(self):
-        ingredients = ['bun', 'patty', 'cheese', 'lettuce', 'tomato', 'bun']
+        # ingredients = ['bun', 'patty', 'cheese', 'lettuce', 'tomato', 'bun']
+        ingredients = ['cheese', 'tomato']
         execute_recipe(ingredients)
+
+    def test_get_camera_image(self):
+        get_camera_image()
+
+    def test_find_center_of(self):
+        image = get_camera_image()
+        camera_coords = find_center_of('Tomato', image, visualize=True)
+        print('camera_coords:', camera_coords)
 
 
 if __name__ == '__main__':
