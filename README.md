@@ -20,5 +20,5 @@ OPENAI_API_KEY=your_openai_api_key_here
 ### 3. Run the Script
 
 ```bash
-python3 llm_burgerbot.py
+python3 burgerbot.py
 ```
