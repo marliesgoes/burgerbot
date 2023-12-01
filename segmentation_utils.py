@@ -78,7 +78,7 @@ def detect(image, text_prompt, model, box_threshold=0.3, text_threshold=0.25):
         device=device,
     )
 
-    return boxes
+    return boxes, logits, phrases
 
 
 def segment(image, sam_model, boxes):
