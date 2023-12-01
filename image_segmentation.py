@@ -2,18 +2,38 @@ from segmentation_utils import detect, groundingdino_model, sam_predictor, segme
 import PIL
 from PIL import Image
 import numpy as np
+import cv2
 
 
 def get_camera_image():
     """
-    Captures an image using the system's camera and returns it.
+    Captures an image using the system's webcam and returns it.
 
     Returns:
-        image: An image object that can be processed by other functions. The exact format
-               of this object will depend on the implementation details and the image
-               processing library being used.
+        image: An image object that can be processed by other functions. The image
+               will be in the format used by OpenCV.
     """
-    pass
+    # Initialize the webcam (0 is the default camera)
+    cap = cv2.VideoCapture(0)
+
+    # Check if the webcam is opened correctly
+    if not cap.isOpened():
+        raise IOError("Cannot open webcam")
+
+    # Capture a single frame
+    ret, frame = cap.read()
+
+    # Release the webcam
+    cap.release()
+
+    # Check if the frame was captured correctly
+    if not ret:
+        raise IOError("Failed to capture image")
+
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    image = Image.fromarray(frame)
+
+    return image
 
 
 def find_center_of(ingredient, image, max_num=1, visualize=False, detection_only=True):
@@ -31,6 +51,7 @@ def find_center_of(ingredient, image, max_num=1, visualize=False, detection_only
     # Flip the image
     image = image.transpose(PIL.Image.FLIP_LEFT_RIGHT)
     image_source, image = transform_image(image)
+
     detected_boxes, logits, phrases = detect(image, text_prompt=ingredient, model=groundingdino_model)
     print(f"Detected {len(detected_boxes)} instances of {ingredient}, picking the top {max_num}...")
     detected_boxes = detected_boxes[:max_num]
