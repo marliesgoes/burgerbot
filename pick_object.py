@@ -31,12 +31,12 @@ def camera_to_robot_coords(img, cam_mat_path, dist_path, pick=(924, 545)):
     x, y, w, h = roi
     dst = dst[y:y+h, x:x+w]
     trans_matrix = np.array(
-        [[0, 1, 0, 0.39], [1, 0, 0, 0.0], [0, 0, -1, 0.455], [0, 0, 0, 1]])
+        [[0, 1, 0, 0.40], [1, 0, 0, 0.0], [0, 0, -1, 0.455], [0, 0, 0, 1]])
     inv_new_cam_mat = np.linalg.inv(newCameraMatrix)
     pickup = np.array([pick[0], pick[1], 1])
     # print(f"pickup: {pickup}")
     cam_coor = inv_new_cam_mat@pickup
-    cam_coor = cam_coor * 0.570
+    cam_coor = cam_coor * 0.505
     # print(cam_coor.shape)
     cam_coor = np.append(cam_coor, 1)
     robo_coor = (trans_matrix@cam_coor)*1000
