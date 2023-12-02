@@ -139,7 +139,12 @@ def execute_recipe(recipe):
                 print_user(user_response)
 
                 if any(word in user_response.lower() for word in ['yes', 'yeah', 'yup']):
-                    am.stream_and_play(f"Trying to find the {item} again...")
+                    am.stream_and_play(
+                        f"Please describe the {item} in more detail.")
+                    audio = am.record_audio()
+                    audio_path = am.save_audio(audio)
+                    user_response = am.transcribe_audio(audio_path)
+                    item = f'{item}: {user_response}'
                 else:
                     am.stream_and_play(f"Skipping {item}.")
                     break

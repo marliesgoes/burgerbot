@@ -1,4 +1,5 @@
-from segmentation_utils import detect, groundingdino_model, transform_image, annotate
+from segmentation_utils import detect, groundingdino_model, transform_image
+from groundingdino.util.inference import annotate
 import PIL
 from PIL import Image
 import cv2
