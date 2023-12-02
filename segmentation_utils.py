@@ -1,4 +1,3 @@
-from segment_anything import build_sam, SamPredictor
 from huggingface_hub import hf_hub_download
 import torch
 from PIL import Image
@@ -16,11 +15,6 @@ import sys
 
 sys.path.append(os.path.join(
     os.getcwd(), "Grounded-Segment-Anything", "GroundingDINO"))
-
-# Grounding DINO
-
-# segment anything
-
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -63,10 +57,6 @@ ckpt_config_filename = "GroundingDINO_SwinB.cfg.py"
 groundingdino_model = load_model_hf(
     ckpt_repo_id, ckpt_filenmae, ckpt_config_filename, device)
 
-sam_checkpoint = 'sam_vit_h_4b8939.pth'
-
-sam_predictor = SamPredictor(build_sam(checkpoint=sam_checkpoint).to(device))
-
 
 def detect(image, text_prompt, model, box_threshold=0.3, text_threshold=0.25):
     boxes, logits, phrases = predict(
@@ -79,22 +69,6 @@ def detect(image, text_prompt, model, box_threshold=0.3, text_threshold=0.25):
     )
 
     return boxes, logits, phrases
-
-
-def segment(image, sam_model, boxes):
-    sam_model.set_image(image)
-    H, W, _ = image.shape
-    boxes_xyxy = box_ops.box_cxcywh_to_xyxy(boxes) * torch.Tensor([W, H, W, H])
-
-    transformed_boxes = sam_model.transform.apply_boxes_torch(
-        boxes_xyxy.to(device), image.shape[:2])
-    masks, _, _ = sam_model.predict_torch(
-        point_coords=None,
-        point_labels=None,
-        boxes=transformed_boxes,
-        multimask_output=False,
-    )
-    return masks.cpu()
 
 
 def draw_mask(mask, image, random_color=True):

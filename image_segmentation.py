@@ -1,7 +1,6 @@
-from segmentation_utils import detect, groundingdino_model, sam_predictor, segment, draw_mask, transform_image, annotate
+from segmentation_utils import detect, groundingdino_model, transform_image, annotate
 import PIL
 from PIL import Image
-import numpy as np
 import cv2
 
 
@@ -36,7 +35,7 @@ def get_camera_image():
     return image
 
 
-def find_center_of(ingredient, image, max_num=1, visualize=False, detection_only=True):
+def find_center_of(ingredient, image, max_num=1, visualize=False):
     """
     Locates the center of a specified ingredient in the given image.
 
@@ -58,42 +57,22 @@ def find_center_of(ingredient, image, max_num=1, visualize=False, detection_only
         f"Detected {len(detected_boxes)} instances of {ingredient}, picking the top {max_num}...")
     detected_boxes = detected_boxes[:max_num]
     print("detected_boxes:", detected_boxes)
-    if not detection_only:
-        segmented_frame_masks = segment(
-            image_source, sam_predictor, boxes=detected_boxes)
 
     if visualize:
-        if not detection_only:
-            print("Visualizing the top segmentation mask")
-            annotated_frame_with_mask = draw_mask(
-                segmented_frame_masks[0][0], image_source)
-            # Visualize the annotated frame with mask
-            image = PIL.Image.fromarray(annotated_frame_with_mask)
-            image.show()
-        else:
-            # Visualize the detected boxes
-            annotated_frame = annotate(
-                image_source=image_source, boxes=detected_boxes, logits=logits, phrases=phrases)
-            annotated_frame = annotated_frame[..., ::-1]  # BGR to RGB
-            annotated_image = Image.fromarray(annotated_frame)
-            annotated_image.show()
+        # Visualize the detected boxes
+        annotated_frame = annotate(
+            image_source=image_source, boxes=detected_boxes, logits=logits, phrases=phrases)
+        annotated_frame = annotated_frame[..., ::-1]  # BGR to RGB
+        annotated_image = Image.fromarray(annotated_frame)
+        annotated_image.show()
 
     # Find the center of the masks
     centers = []
-    if not detection_only:
-        for mask in segmented_frame_masks:
-            mask = mask[0]
-            mask = mask.cpu().numpy()
-            pixels = np.argwhere(mask > 0)
-            center = np.mean(pixels, axis=0)
-            y, x = center
-            centers.append((int(x), int(y)))
-    else:
-        for detected_box in detected_boxes:
-            x1, y1, w, h = detected_box
-            center = x1, y1
-            center = (int(center[1] * image_source.shape[0]),
-                      int(center[0] * image_source.shape[1]))
-            centers.append(center)
+    for detected_box in detected_boxes:
+        x1, y1, w, h = detected_box
+        center = x1, y1
+        center = (int(center[1] * image_source.shape[0]),
+                  int(center[0] * image_source.shape[1]))
+        centers.append(center)
 
     return centers
