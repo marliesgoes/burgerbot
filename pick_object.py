@@ -22,7 +22,7 @@ def camera_to_robot_coords(cam_x, cam_y):
     return int(rob_x), int(rob_y)
 
 
-def move_item(robo_coor, dropoff_coords=(300, 100), height=-55):
+def move_item(robo_coor, dropoff_coords=(300, 100), dropoff_height=-55, pickup_height=-55):
     """
     Commands the robot to move an item from pickup coordinates to dropoff coordinates.
 
@@ -36,11 +36,12 @@ def move_item(robo_coor, dropoff_coords=(300, 100), height=-55):
     dexarm = Dexarm(port="/dev/tty.usbmodem308B335D34381")
     dexarm.go_home()
     dexarm.move_to(robo_coor[0], robo_coor[1], 0)
-    dexarm.move_to(robo_coor[0], robo_coor[1], height)
+    dexarm.move_to(robo_coor[0], robo_coor[1], pickup_height)
     dexarm.air_picker_pick()
     dexarm.move_to(robo_coor[0], robo_coor[1], 0)
+
     dexarm.move_to(dropoff_coords[0], dropoff_coords[1], 0)
-    dexarm.move_to(dropoff_coords[0], dropoff_coords[1], height)
+    dexarm.move_to(dropoff_coords[0], dropoff_coords[1], dropoff_height)
 
     dexarm.air_picker_place()
     dexarm.move_to(dropoff_coords[0], dropoff_coords[1], 0)

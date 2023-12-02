@@ -144,9 +144,13 @@ def execute_recipe(recipe):
                     am.stream_and_play(f"Skipping {item}.")
                     break
 
+    i = 0
     for item, robo_coors in found_items.items():
         am.stream_and_play(f"Moving {item}...")
-        move_item(robo_coors)
+        # Increase dropoff height as burger grows
+        dropoff_height = -55 + (i * 15)
+        move_item(robo_coors, dropoff_height=dropoff_height)
+        i += 1
 
     am.stream_and_play(f"All done! Enjoy!")
 
