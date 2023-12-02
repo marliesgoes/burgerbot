@@ -110,39 +110,39 @@ DROPOFF_COORDS = None
 
 def execute_recipe(recipe):
     """
-    Executes the recipe by finding and moving each ingredient to the dropoff coordinates.
+    Executes the recipe by first finding all ingredients and then moving them to the dropoff coordinates.
 
     Parameters:
         recipe (list): A list of ingredients that need to be assembled to make the dish.
     """
+    found_items = {}
+
     for item in recipe:
         item_found = False
+        image = get_camera_image()
+
         while not item_found:
-            # Find center of ingredient in image
             am.stream_and_play(f"I'm looking for the {item}...")
-            image = get_camera_image()
             camera_coords = find_center_of(item, image, visualize=True)
 
-            # Check if the item was found based on the returned coordinates
             if len(camera_coords) > 0:
                 am.stream_and_play(f"I found the {item}...")
-                am.stream_and_play(f"Camera Coordinates: {camera_coords}.")
                 robo_coors = camera_to_robot_coords(*camera_coords[0])
-                am.stream_and_play(f"Robot Coordinates: {robo_coors}.")
-                am.stream_and_play(f"Moving {item}...")
-                move_item(robo_coors)
+                found_items[item] = robo_coors
                 item_found = True
             else:
-                # If not found, interact with the user for further instructions
-                print_robot(f"I couldn't find the {item}. Should I try again?")
-                # This function would need to be implemented to capture user input
-                user_response = get_user_input()
-
+                am.stream_and_play(
+                    f"I couldn't find the {item}. Should I try again?")
+                user_response = input('yes/no?')
                 if user_response.lower() in ['yes', 'y']:
                     print_robot(f"Trying to find the {item} again...")
                 else:
-                    print_robot("Moving on to the next item.")
-                    break  # Exit the while loop and move on to the next item
+                    print_robot(f"Skipping {item}.")
+                    break
+
+    for item, robo_coors in found_items.items():
+        am.stream_and_play(f"Moving {item}...")
+        move_item(robo_coors)
 
     am.stream_and_play(f"All done! Enjoy!")
 
