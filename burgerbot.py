@@ -121,17 +121,14 @@ def execute_recipe(recipe):
             # Find center of ingredient in image
             am.stream_and_play(f"I'm looking for the {item}...")
             image = get_camera_image()
-            camera_coords = find_center_of(item, image,visualize=True)
+            camera_coords = find_center_of(item, image, visualize=True)
 
             # Check if the item was found based on the returned coordinates
-            if camera_coords is not None:
+            if len(camera_coords) > 0:
                 am.stream_and_play(f"I found the {item}...")
-                # cam_mat_path = "cameraMatrix.npy"
-                # dist_path = "dist.npy"
-                cam_mat_path = "/Users/jeelshah/Documents/Fall 2023/TalkingToRobots/project/burgerbot/calib/cameraMatrix.npy"
-                dist_path = "/Users/jeelshah/Documents/Fall 2023/TalkingToRobots/project/burgerbot/calib/dist.npy"
-                robo_coors = camera_to_robot_coords(
-                    image, cam_mat_path, dist_path, pick=camera_coords)
+                am.stream_and_play(f"Camera Coordinates: {camera_coords}.")
+                robo_coors = camera_to_robot_coords(*camera_coords[0])
+                am.stream_and_play(f"Robot Coordinates: {robo_coors}.")
                 am.stream_and_play(f"Moving {item}...")
                 move_item(robo_coors)
                 item_found = True

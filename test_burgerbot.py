@@ -14,26 +14,24 @@ class TestExtractRecipe(unittest.TestCase):
                          {'role': 'system', 'content': 'Confirmation. Your burger with ham and cheese will be made with burger buns, tomatoes, lettuce, pickles, cheese, and ham. Enjoy your meal!'}]
 
     def test_extract_recipe(self):
-        # ingredients = extract_recipe(self.messages)
-        # for ingredient in ingredients:
-        #     print('🌼 ', ingredient)
-        pass
+        ingredients = extract_recipe(self.messages)
+        for ingredient in ingredients:
+            print('🌼 ', ingredient)
 
     def test_execute_recipe(self):
         # ingredients = ['bun', 'patty', 'cheese', 'lettuce', 'tomato', 'bun']
-        # ingredients = ['cheese', 'tomato']
-        ingredients = ['cheese']
+        ingredients = ['yellow square cheese', 'red tomato']
+        # ingredients = ['cheese']
         execute_recipe(ingredients)
 
     def test_get_camera_image(self):
-        # get_camera_image()
-        pass
+        image = get_camera_image()
+        image.save('images_mg/home.jpg')
 
     def test_find_center_of(self):
-        # image = get_camera_image()
-        # camera_coords = find_center_of('Tomato', image, visualize=True)
-        # print('camera_coords:', camera_coords)
-        pass
+        image = get_camera_image()
+        camera_coords = find_center_of('Tomato', image, visualize=True)
+        print('camera_coords:', camera_coords)
 
 
 if __name__ == '__main__':

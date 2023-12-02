@@ -52,27 +52,32 @@ def find_center_of(ingredient, image, max_num=1, visualize=False, detection_only
     image = image.transpose(PIL.Image.FLIP_LEFT_RIGHT)
     image_source, image = transform_image(image)
 
-    detected_boxes, logits, phrases = detect(image, text_prompt=ingredient, model=groundingdino_model)
-    print(f"Detected {len(detected_boxes)} instances of {ingredient}, picking the top {max_num}...")
+    detected_boxes, logits, phrases = detect(
+        image, text_prompt=ingredient, model=groundingdino_model)
+    print(
+        f"Detected {len(detected_boxes)} instances of {ingredient}, picking the top {max_num}...")
     detected_boxes = detected_boxes[:max_num]
     print("detected_boxes:", detected_boxes)
     if not detection_only:
-        segmented_frame_masks = segment(image_source, sam_predictor, boxes=detected_boxes)
-    
+        segmented_frame_masks = segment(
+            image_source, sam_predictor, boxes=detected_boxes)
+
     if visualize:
         if not detection_only:
             print("Visualizing the top segmentation mask")
-            annotated_frame_with_mask = draw_mask(segmented_frame_masks[0][0], image_source)
+            annotated_frame_with_mask = draw_mask(
+                segmented_frame_masks[0][0], image_source)
             # Visualize the annotated frame with mask
             image = PIL.Image.fromarray(annotated_frame_with_mask)
             image.show()
         else:
             # Visualize the detected boxes
-            annotated_frame = annotate(image_source=image_source, boxes=detected_boxes, logits=logits, phrases=phrases)
-            annotated_frame = annotated_frame[...,::-1] # BGR to RGB
+            annotated_frame = annotate(
+                image_source=image_source, boxes=detected_boxes, logits=logits, phrases=phrases)
+            annotated_frame = annotated_frame[..., ::-1]  # BGR to RGB
             annotated_image = Image.fromarray(annotated_frame)
             annotated_image.show()
-    
+
     # Find the center of the masks
     centers = []
     if not detection_only:
@@ -87,7 +92,8 @@ def find_center_of(ingredient, image, max_num=1, visualize=False, detection_only
         for detected_box in detected_boxes:
             x1, y1, w, h = detected_box
             center = x1, y1
-            center = (int(center[0] * image_source.shape[1]), int(center[1] * image_source.shape[0]))
+            center = (int(center[1] * image_source.shape[0]),
+                      int(center[0] * image_source.shape[1]))
             centers.append(center)
 
     return centers
