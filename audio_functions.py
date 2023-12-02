@@ -19,9 +19,11 @@ class AudioManager:
         """
         Record audio from the microphone for a specified duration and sampling rate.
         """
+        play(AudioSegment.from_file('audio/start_listening.m4a'))
         print("Listening...")
         audio = sd.rec(int(duration * fs), samplerate=fs, channels=1)
         sd.wait()
+        play(AudioSegment.from_file('audio/stop_listening.m4a'))
         print("Recording finished")
         return audio
 
