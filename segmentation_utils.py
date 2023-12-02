@@ -2,12 +2,10 @@ from huggingface_hub import hf_hub_download
 import torch
 from PIL import Image
 import PIL
-import matplotlib.pyplot as plt
 import numpy as np
-from groundingdino.util.inference import annotate, predict
-from groundingdino.util.utils import clean_state_dict, get_phrases_from_posmap
+from groundingdino.util.inference import predict
+from groundingdino.util.utils import clean_state_dict
 from groundingdino.util.slconfig import SLConfig
-from groundingdino.util import box_ops
 from groundingdino.models import build_model
 import groundingdino.datasets.transforms as T
 import os
