@@ -20,7 +20,7 @@ class TestExtractRecipe(unittest.TestCase):
 
     def test_execute_recipe(self):
         # ingredients = ['bun', 'patty', 'cheese', 'lettuce', 'tomato', 'bun']
-        ingredients = ['yellow square cheese', 'red tomato']
+        ingredients = ['pink penguin', 'red tomato']
         # ingredients = ['cheese']
         execute_recipe(ingredients)
 

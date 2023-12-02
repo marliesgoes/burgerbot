@@ -116,11 +116,10 @@ def execute_recipe(recipe):
         recipe (list): A list of ingredients that need to be assembled to make the dish.
     """
     found_items = {}
+    image = get_camera_image()
 
     for item in recipe:
         item_found = False
-        image = get_camera_image()
-
         while not item_found:
             am.stream_and_play(f"I'm looking for the {item}...")
             camera_coords = find_center_of(item, image, visualize=True)
@@ -135,9 +134,9 @@ def execute_recipe(recipe):
                     f"I couldn't find the {item}. Should I try again?")
                 user_response = input('yes/no?')
                 if user_response.lower() in ['yes', 'y']:
-                    print_robot(f"Trying to find the {item} again...")
+                    am.stream_and_play(f"Trying to find the {item} again...")
                 else:
-                    print_robot(f"Skipping {item}.")
+                    am.stream_and_play(f"Skipping {item}.")
                     break
 
     for item, robo_coors in found_items.items():
