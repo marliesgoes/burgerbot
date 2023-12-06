@@ -19,10 +19,11 @@ class TestExtractRecipe(unittest.TestCase):
             print('🌼 ', ingredient)
 
     def test_execute_recipe(self):
-        # ingredients = ['bun', 'patty', 'cheese', 'lettuce', 'tomato', 'bun']
+        ingredients = ['bun', 'patty', 'cheese', 'lettuce', 'tomato', 'pickle']
         # ingredients = ['pink penguin', 'red tomato']
         # ingredients = ['yellow cheese', 'red tomato']
-        ingredients = ['bun']
+        # ingredients = ['almond colored hamburger bun']
+        # ingredients = ['patty', 'bun']
         execute_recipe(ingredients)
 
     def test_get_camera_image(self):

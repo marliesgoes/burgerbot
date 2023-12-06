@@ -115,25 +115,36 @@ def execute_recipe(recipe):
     Parameters:
         recipe (list): A list of ingredients that need to be assembled to make the dish.
     """
-    found_items = {}
+    found_items = {item: [] for item in recipe}
     image = get_camera_image()
+    description = None
 
     for item in recipe:
         item_found = False
         while not item_found:
-            am.stream_and_play(f"I'm looking for the {item}...")
-            camera_coords = find_center_of(item, image, visualize=True)
+            if 'bun' in item:
+                description = 'almond colored round plastic toy hamburger bun'
+            if description:
+                camera_coords = find_center_of(
+                    f'{item} {description}', image, visualize=True)
+            else:
+                am.stream_and_play(f"I'm looking for the {item}...")
+                camera_coords = find_center_of(
+                    f'{item}', image, visualize=True)
 
             if len(camera_coords) > 0:
                 am.stream_and_play(f"I found the {item}...")
-                robo_coors = camera_to_robot_coords(*camera_coords[0])
-                found_items[item] = robo_coors
+                for cam_coord in camera_coords:
+                    robo_coord = camera_to_robot_coords(*cam_coord)
+                    found_items[item].append(robo_coord)
                 item_found = True
+                description = None
+                temp_image = None
             else:
                 am.stream_and_play(
                     f"I couldn't find the {item}. Should I try again?")
 
-                audio = am.record_audio()
+                audio = am.record_audio(duration=2)
                 audio_path = am.save_audio(audio)
                 user_response = am.transcribe_audio(audio_path)
                 print_user(user_response)
@@ -143,19 +154,18 @@ def execute_recipe(recipe):
                         f"Please describe the {item} in more detail.")
                     audio = am.record_audio()
                     audio_path = am.save_audio(audio)
-                    user_response = am.transcribe_audio(audio_path)
-                    item = f'{item}: {user_response}'
+                    description = am.transcribe_audio(audio_path)
+                    am.stream_and_play(
+                        f"Thanks. I'm trying to find the {item}: {description}.")
+                    image = get_camera_image()
                 else:
                     am.stream_and_play(f"Skipping {item}.")
                     break
 
-    i = 0
-    for item, robo_coors in found_items.items():
-        am.stream_and_play(f"Moving {item}...")
-        # Increase dropoff height as burger grows
-        dropoff_height = -55 + (i * 15)
-        move_item(robo_coors, dropoff_height=dropoff_height)
-        i += 1
+    print('found_items:', found_items)
+
+    am.stream_and_play(f"I'm building your burger now!")
+    move_items(found_items, recipe)
 
     am.stream_and_play(f"All done! Enjoy!")
 
